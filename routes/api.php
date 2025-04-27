@@ -17,6 +17,11 @@ Route::middleware([StartSession::class])->group(function () {
         Route::post('/documents', [DocumentController::class, 'store']);
     });
     Route::middleware('auth')->get('/documents', [DocumentController::class, 'index']);
+    Route::middleware('auth')->delete('/documents/{document}', [DocumentController::class, 'destroy']);
+    Route::middleware('auth')->get('/documents/{document}/download', [DocumentController::class, 'download']);
+
+
+    
 });
 
 
