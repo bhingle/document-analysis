@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DocumentController;
+use Illuminate\Support\Facades\Log;
 
 
 use Illuminate\Session\Middleware\StartSession; // 🛠️ Important
@@ -19,7 +20,13 @@ Route::middleware([StartSession::class])->group(function () {
     Route::middleware('auth')->get('/documents', [DocumentController::class, 'index']);
     Route::middleware('auth')->delete('/documents/{document}', [DocumentController::class, 'destroy']);
     Route::middleware('auth')->get('/documents/{document}/download', [DocumentController::class, 'download']);
+    Log::info('testing logs');
+    // Analyze a specific document
+    //Route::post('/documents/{document}/analyze', [DocumentController::class, 'analyze']);
+    Route::middleware('auth')->post('/documents/{document}/analyze', [DocumentController::class, 'analyze']);
 
+
+    
 
     
 });
