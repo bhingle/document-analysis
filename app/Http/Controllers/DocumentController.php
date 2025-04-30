@@ -90,76 +90,81 @@ class DocumentController extends Controller
     
         return response()->download($filePath, $document->original_name);
     }
-   
-
 
     public function analyze(Document $document)
     {
         Log::info('Inside analyze function');
-        
-        $filePath = storage_path('app/private/' . $document->filename);
 
+        $filePath = storage_path('app/private/' . $document->filename);
         if (!file_exists($filePath)) {
-            Log::error('File not found at path: ' . $filePath);
             return response()->json(['message' => 'File not found.'], 404);
         }
 
-        // ✅ Properly extract text from PDF
-        $parser = new Parser();
+        // Extract PDF text
+        $parser = new \Smalot\PdfParser\Parser();
         $pdf = $parser->parseFile($filePath);
         $text = $pdf->getText();
-
-        // 🔥 Fix encoding issues (still good practice)
         $text = mb_convert_encoding($text, 'UTF-8', 'UTF-8');
 
-        Log::info('Extracted text from PDF:', ['text' => $text]);
+        //Log::info('Extracted text from PDF:', ['text' => $text]);
 
-        // HuggingFace API setup
-        $huggingFaceApiKey = env('HUGGINGFACE_API_KEY');
-        $huggingFaceModel = 'facebook/bart-large-mnli'; // or whatever model you want
-#langchain
-#nossl
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $huggingFaceApiKey,
-        ])->post("https://api-inference.huggingface.co/models/{$huggingFaceModel}", [
-            'inputs' => $text,
-        ]);
+
+    //You have exceeded your monthly included credits for Inference Providers.
+    $openaiApiKey = env('OPENAI_API_KEY');
+    $prompt = "You are an AI legal assistant. Analyze the following document and extract:\n
+    1. Key Sections\n
+    2. Critical Items\n
+    3. Defined Terms\n
+    4. Obligations\n
+    \nDocument Text:\n\"$text\"";
+
+    $response = Http::withHeaders([
+        'Authorization' => 'Bearer ' . $openaiApiKey,
+        'Content-Type' => 'application/json',
+    ])->post('https://api.openai.com/v1/chat/completions', [
+        'model' => 'gpt-3.5-turbo', // or use 'gpt-4'
+        'messages' => [
+            ['role' => 'system', 'content' => 'You are a helpful legal analysis assistant.'],
+            ['role' => 'user', 'content' => $prompt],
+        ],
+        'temperature' => 0.3,
+    ]);
+            
+
+    // HuggingFace API setup - You have exceeded your monthly included credits for Inference Providers.
+    //     $response = Http::withHeaders([
+    //         'Authorization' => 'Bearer ' . $huggingFaceApiKey,
+    //     ])->post("https://api-inference.huggingface.co/models/{$huggingFaceModel}", [
+    //         'inputs' => $text,
+    //     ]);
+
+    // Deepseek API setup - You have exceeded your monthly included credits for Inference Providers.
+    // $response = Http::withHeaders([
+    //     'Authorization' => 'Bearer ' . $deepseekApiKey,
+    //     'Content-Type' => 'application/json',
+    // ])->post('https://api.deepseek.com/v1/chat/completions', [
+    //     'model' => 'deepseek-chat',
+    //     'messages' => [
+    //         ['role' => 'system', 'content' => 'You are a legal document analyzer.'],
+    //         ['role' => 'user', 'content' => $prompt],
+    //     ],
+    //     'temperature' => 0.2,
+    // ]);
+    
+        Log::info('Open AI raw response body:', ['body' => $response->body()]);
+        Log::info('Open AI response JSON:', ['json' => $response->json()]);
         
-
-        // Log::info('HuggingFace Response:', ['response' => $response->json()]);
-
-        // if ($response->failed()) {
-        //     return response()->json(['message' => 'Error analyzing document.'], 500);
-        // }
-
-        // Handle possible loading response
-        // $attempts = 0;
-        // while (($response->json() === null || isset($response->json()['error'])) && $attempts < 3) {
-        //     Log::info('Model still loading... retrying');
-        //     sleep(5); // Wait for 3 seconds
-        //     $response = Http::withOptions([
-        //         'verify' => false,
-        //     ])->withHeaders([
-        //         'Authorization' => 'Bearer ' . $huggingFaceApiKey,
-        //     ])->post("https://api-inference.huggingface.co/models/{$huggingFaceModel}", [
-        //         'inputs' => $text,
-        //     ]);
-        //     $attempts++;
-        // }
-
-        Log::info('Final HuggingFace Response:', ['response' => $response->json()]);
-
-        if ($response->failed() || $response->json() === null) {
-            return response()->json(['message' => 'Error analyzing document.'], 500);
+        if ($response->failed()) {
+            return response()->json(['message' => 'OpenAI analysis failed.'], 500);
         }
-
 
         $result = $response->json();
 
         return response()->json([
-            'message' => 'Analysis successful.',
-            'analysis' => $result,
+            'message' => 'Analysis complete.',
+            'result' => $result['response'] ?? 'No response content',
         ]);
     }
+
     
 }
