@@ -156,6 +156,13 @@ class DocumentController extends Controller
         // Store analysis result in cache for 1 hr (3600 seconds)
         cache()->put($cacheKey, $result, 3600);
     
+        $parsedResult = $result['choices'][0]['message']['content'] ?? 'No result';
+ 
+        // Save to DB
+        $document->analysis = $parsedResult;
+        $document->status = 'analyzed';
+        $document->save();
+        
         return response()->json([
             'message' => 'Analysis complete.',
             'result' => $result,
