@@ -23,7 +23,8 @@ Route::middleware([StartSession::class])->group(function () {
     Log::info('testing logs');
     // Analyze a specific document
     //Route::post('/documents/{document}/analyze', [DocumentController::class, 'analyze']);
-    Route::middleware('auth')->post('/documents/{document}/analyze', [DocumentController::class, 'analyze']);
+    //Rate Limiting - throttle req,min i.e. here 1 req per 1 min
+    Route::middleware(['auth', 'throttle:1,1'])->post('/documents/{document}/analyze', [DocumentController::class, 'analyze']);
 
     Route::middleware('auth')->get('/analyzed-documents', [DocumentController::class, 'analyzedDocuments']);
 
