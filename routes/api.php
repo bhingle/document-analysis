@@ -25,6 +25,9 @@ Route::middleware([StartSession::class])->group(function () {
     //Route::post('/documents/{document}/analyze', [DocumentController::class, 'analyze']);
     Route::middleware('auth')->post('/documents/{document}/analyze', [DocumentController::class, 'analyze']);
 
+    Route::middleware('auth')->get('/analyzed-documents', [DocumentController::class, 'analyzedDocuments']);
+
+
 
     
 

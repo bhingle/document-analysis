@@ -173,5 +173,26 @@ class DocumentController extends Controller
         ]);
     }
 
+    public function analyzedDocuments(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->role === 'admin') {
+            // Admin: return all analyzed documents
+            $documents = Document::whereNotNull('analysis')
+                ->get(['id', 'original_name', 'analysis', 'created_at']);
+        } else {
+            // Customer: return only their own analyzed documents
+            $documents = Document::where('user_id', $user->id)
+                ->whereNotNull('analysis')
+                ->get(['id', 'original_name', 'analysis', 'created_at']);
+        }
+
+        return response()->json([
+            'analyzed_documents' => $documents
+        ]);
+    }
+
+
     
 }
