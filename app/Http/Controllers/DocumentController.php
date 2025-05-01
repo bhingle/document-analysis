@@ -19,28 +19,57 @@ class DocumentController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the request
-        $request->validate([
-            'file' => 'required|file|mimes:pdf,doc,docx|max:20480', // 20MB max
-        ]);
-
-        // Save the file
-        $uploadedFile = $request->file('file');
-        $storedFilename = $uploadedFile->store('documents');
-
-        // Save info to database
-        $document = Document::create([
-            'user_id' => auth()->id(),
-            'filename' => $storedFilename,
-            'original_name' => $uploadedFile->getClientOriginalName(),
-            'status' => 'pending', 
-        ]);
-
+        // Check if file is uploaded
+        if ($request->hasFile('file')) {
+            $request->validate([
+                'file' => 'file|mimes:pdf,txt|max:20480',
+            ], [
+                'file.mimes' => 'Only PDF and TXT files are allowed.',
+            ]);
+    
+            $uploadedFile = $request->file('file');
+            $storedFilename = $uploadedFile->store('documents');
+    
+            $document = Document::create([
+                'user_id' => auth()->id(),
+                'filename' => $storedFilename,
+                'original_name' => $uploadedFile->getClientOriginalName(),
+                'status' => 'pending',
+            ]);
+    
+            return response()->json([
+                'message' => 'Document uploaded successfully!',
+                'document' => $document,
+            ], 201);
+        }
+    
+        // Else: check if text content was provided
+        if ($request->has('file')) {  // 'file' is a text field here
+            $content = $request->input('file');
+    
+            // Save text as .txt file
+            $filename = 'documents/' . uniqid() . '.txt';
+            \Storage::put($filename, $content);
+    
+            $document = Document::create([
+                'user_id' => auth()->id(),
+                'filename' => $filename,
+                'original_name' => 'text_input.txt',
+                'status' => 'pending',
+            ]);
+    
+            return response()->json([
+                'message' => 'Text content saved as document!',
+                'document' => $document,
+            ], 201);
+        }
+    
+        // If neither file nor text
         return response()->json([
-            'message' => 'Document uploaded successfully!',
-            'document' => $document,
-        ], 201);
+            'message' => 'Please upload a PDF/TXT file or provide text content.',
+        ], 400);
     }
+    
     //Fetching all documents for respective users
     public function index(Request $request)
     {
