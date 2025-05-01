@@ -160,6 +160,13 @@ class DocumentController extends Controller
 
         $result = $response->json();
 
+        $parsedResult = $result['choices'][0]['message']['content'] ?? 'No result';
+
+        // Save to DB
+        $document->analysis = $parsedResult;
+        $document->status = 'analyzed';
+        $document->save();
+
         return response()->json([
             'message' => 'Analysis complete.',
             'result' => $result['response'] ?? 'No response content',

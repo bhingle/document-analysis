@@ -13,5 +13,8 @@ class Document extends Model
         'user_id',
         'filename',
         'original_name',
+        'status',
+        'analysis',
     ];
+    
 }
