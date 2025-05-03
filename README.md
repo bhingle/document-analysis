@@ -30,8 +30,8 @@ A Laravel-based REST API for uploading, analyzing, and managing PDF documents us
 | `/documents`                     | GET    | `DocumentController@index`            | Lists all uploaded documents of the authenticated user. | None <br> URL: `http://127.0.0.1:8000/api/documents`                      | ```json { "documents": [ { "id": 23, "original_name": "Sample_Service_Contract.pdf", "uploaded_at": "2025-05-03T17:51:30.000000Z", "url": "/storage/documents/glHzl9MdEHjZGVjKXLAVwbAmwDs5j1gJpGBbTZyh.pdf" } ] } ``` |
 | `/documents/{document}`          | DELETE | `DocumentController@destroy`          | Deletes a specific document.                 | `{document}` → Document ID in URL path <br> Example: `/api/documents/23`    | `{ "message": "Document deleted successfully." }` |
 | `/documents/{document}/download` | GET    | `DocumentController@download`         | Downloads the original uploaded document.    | `{document}` → Document ID in URL path <br> Example: `/api/documents/24/download` | **PDF file download** |
-| `/documents/{document}/analyze`  | POST   | `DocumentController@analyze`          | Analyzes a specific document using OpenAI and caches result. | `{document}` → Document ID in URL path                                     | *(Result cached internally)* |
-| `/analyzed-documents`            | GET    | `DocumentController@analyzedDocuments`| Retrieves a list of analyzed documents for the authenticated user. | None                                                                        | *(List of analyzed documents)* |
+| `/documents/{document}/analyze`  | POST   | `DocumentController@analyze`          | Analyzes a specific document using OpenAI and caches result. | `{document}` → Document ID in URL path                                     | [ Sample Analyzed Document via API](https://docs.google.com/document/d/1gVhWIIIlvtY6aWSQ93RfC79gq0wspIfRP4iagEeLp6o/edit?usp=sharing) |
+| `/analyzed-documents`            | GET    | `DocumentController@analyzedDocuments`| Retrieves a list of analyzed documents for the authenticated user. | None                                                                        | [All Analyzed Document](https://docs.google.com/document/d/1DT5ch7CkiAYwo-SrFnZPLNI8qWX7mxkCAq5WEltcUP0/edit?usp=sharing) |
 
 ---
 
@@ -121,6 +121,8 @@ A Laravel-based REST API for uploading, analyzing, and managing PDF documents us
 
 ## 🏗️ System Architecture Diagram
 
+![Architecture Diagram](https://github.com/bhingle/document-analysis/blob/main/Architecture%20Diagram.png?raw=true)
+
 This architecture shows a Laravel-based system:
 
 - Users interact via Postman/browser
@@ -161,13 +163,6 @@ This architecture shows a Laravel-based system:
 - Interactive frontend GUI for backend
 - Migrate to **cloud database & deployment**
 - Add **queue system** for large doc processing
-
----
-
-## 📎 Documentation Links
-
-- [📖 Project Documentation (Google Doc)](https://docs.google.com/document/d/1gVhWIIIlvtY6aWSQ93RfC79gq0wspIfRP4iagEeLp6o/edit?usp=sharing)
-- [📝 Analyzed Document Example (Google Doc)](https://docs.google.com/document/d/1DT5ch7CkiAYwo-SrFnZPLNI8qWX7mxkCAq5WEltcUP0/edit?usp=sharing)
 
 ---
 
