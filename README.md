@@ -21,6 +21,8 @@ A Laravel-based REST API for uploading, analyzing, and managing PDF documents us
 
 ## 📝 API Endpoints
 
+Download the Postman Collection: [Download Collection](https://github.com/bhingle/document-analysis/blob/main/Document%20Analysis.postman_collection.json)
+
 | Endpoint                         | Method | Controller Method                     | Description                                 | Request Body / Params                                                       | Response Example |
 |---------------------------------|--------|--------------------------------------|---------------------------------------------|-----------------------------------------------------------------------------|-----------------|
 | `/register`                      | POST   | `RegisteredUserController@store`      | Registers a new user.                       | `{ "name": "testuser48", "email": "test48@example.com", "password": "password123", "password_confirmation": "password123" }` | `{ "message": "User registered successfully!" }` OR `{ "message": "User already registered with this email." }` |
