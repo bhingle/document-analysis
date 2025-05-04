@@ -16,11 +16,25 @@ A Laravel-based REST API for uploading, analyzing, and managing PDF documents us
 
 - `Smalot\PdfParser`
 - `Http\Request`
+---
+## 🏗️ System Architecture Diagram
 
 Check out the demo on YouTube:  
 [👉 Watch the demo here](https://www.youtube.com/watch?v=fQkxtaQirDo)
----
 
+![Architecture Diagram](https://github.com/bhingle/document-analysis/blob/main/Architecture%20Diagram.png?raw=true)
+
+This architecture shows a Laravel-based system:
+
+- Users interact via Postman/browser
+- Files stored in `/storage/app/private`
+- Metadata saved in **SQLite**
+- On `/analyze`:
+  - Laravel checks **file-based cache** (using `CACHE_DRIVER=file`)
+  - If cached → returns cached result
+  - If not cached → calls **OpenAI API** (API key from `.env`), saves response to **cache + DB**, returns to client
+
+---
 ## 📝 API Endpoints
 
 Download the Postman Collection: [Download Collection](https://github.com/bhingle/document-analysis/blob/main/Document%20Analysis.postman_collection.json)
@@ -120,22 +134,6 @@ Download the Postman Collection: [Download Collection](https://github.com/bhingl
 - Cached analysis → avoids repeated API calls
 - Rate limiting → prevents abuse + controls API quota
 - Store AI result in DB → future reads come from DB/cache
-
----
-
-## 🏗️ System Architecture Diagram
-
-![Architecture Diagram](https://github.com/bhingle/document-analysis/blob/main/Architecture%20Diagram.png?raw=true)
-
-This architecture shows a Laravel-based system:
-
-- Users interact via Postman/browser
-- Files stored in `/storage/app/private`
-- Metadata saved in **SQLite**
-- On `/analyze`:
-  - Laravel checks **file-based cache** (using `CACHE_DRIVER=file`)
-  - If cached → returns cached result
-  - If not cached → calls **OpenAI API** (API key from `.env`), saves response to **cache + DB**, returns to client
 
 ---
 
