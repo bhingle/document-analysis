@@ -10,16 +10,18 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Smalot\PdfParser\Parser;
+use Barryvdh\DomPDF\Facade\Pdf;
 
-
+/* 
+Controller for document manipulation
+Developer - Abhishek Bhingle
+*/
 class DocumentController extends Controller
 {
-    /**
-     * Handle document upload.
-     */
+    // Handle document upload.
     public function store(Request $request)
     {
-        // Check if file is uploaded
+        // Check if file is uploaded and make the validation
         if ($request->hasFile('file')) {
             $request->validate([
                 'file' => 'file|mimes:pdf,txt|max:20480',
@@ -43,7 +45,7 @@ class DocumentController extends Controller
             ], 201);
         }
     
-        // Else: check if text content was provided
+        // Check if text content was provided
         if ($request->has('file')) {  // 'file' is a text field here
             $content = $request->input('file');
     
@@ -70,7 +72,7 @@ class DocumentController extends Controller
         ], 400);
     }
     
-    //Fetching all documents for respective users
+    //Fetching all documents for respective users i.e.(admin/customer)
     public function index(Request $request)
     {
         $documents = $request->user()->documents()->get()->map(function ($document) {
@@ -87,9 +89,9 @@ class DocumentController extends Controller
         ]);
     }
 
+    // Delete the document
     public function destroy(Request $request, Document $document)
     {
-        
         // Authorize: user can only delete their own document
         if ($document->user_id !== $request->user()->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
@@ -109,6 +111,7 @@ class DocumentController extends Controller
         return response()->json(['message' => 'Document deleted successfully.']);
     }
 
+    // Download the document
     public function download($id)
     {
         $document = Document::findOrFail($id);
@@ -124,10 +127,9 @@ class DocumentController extends Controller
         return response()->download($filePath, $document->original_name);
     }
 
+    // Document analysis with the help of Open AI API
     public function analyze(Document $document)
     {
-        Log::info('Inside analyze function');
-    
         $cacheKey = 'document_analysis_' . $document->id;
     
         //  Check if cached result exists
@@ -139,7 +141,7 @@ class DocumentController extends Controller
             ]);
         }
     
-        // 🔍 Proceed to analyze if no cache
+        // Proceed to analyze if no cache
         $filePath = storage_path('app/private/' . $document->filename);
     
         if (!file_exists($filePath)) {
@@ -173,9 +175,6 @@ class DocumentController extends Controller
             'temperature' => 0.3,
         ]);
     
-        Log::info('Open AI raw response body:', ['body' => $response->body()]);
-        Log::info('Open AI response JSON:', ['json' => $response->json()]);
-    
         if ($response->failed()) {
             return response()->json(['message' => 'OpenAI analysis failed.'], 500);
         }
@@ -187,7 +186,7 @@ class DocumentController extends Controller
     
         $parsedResult = $result['choices'][0]['message']['content'] ?? 'No result';
  
-        // Save to DB
+        // Save to Database
         $document->analysis = $parsedResult;
         $document->status = 'analyzed';
         $document->save();
@@ -197,12 +196,16 @@ class DocumentController extends Controller
             'result' => $result,
         ]);
     }
-    
 
+    /*    
+        Get the the analyzed documents
+        For admin - all documents are fetched
+        For customers - only his documents are fetched
+    */
     public function analyzedDocuments(Request $request)
     {
         $user = $request->user();
-
+        // check if the user is Admin/Customer
         if ($user->role === 'admin') {
             // Admin: return all analyzed documents
             $documents = Document::whereNotNull('analysis')
@@ -217,8 +220,5 @@ class DocumentController extends Controller
         return response()->json([
             'analyzed_documents' => $documents
         ]);
-    }
-
-
-    
+    }  
 }
