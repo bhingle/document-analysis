@@ -3,24 +3,6 @@
 A Laravel-based REST API for uploading, analyzing, and managing PDF documents using OpenAI and PDF parsing libraries.
 
 ---
-
-## 🏗️ Tech Stack
-
-- **PHP version**: 8.2.28
-- **Laravel Framework version**: 12.10.2
-- **Database**: SQLite
-- **OpenAI API**
-- **Postman** – API Testing
-
-### Laravel Libraries / Packages
-
-- `Smalot\PdfParser`
-- `Http\Request`
----
-## 🛠️ Project Setup
-Follow the instructions [here](https://docs.google.com/document/d/1pOb4KlfSNzRetxwUk9A92W2aj5bUdJCUqD7Rgi0wFC4/edit?usp=sharing)
-
----
 ## 🏗️ System Architecture Diagram
 
 Check out the demo on YouTube:  
@@ -37,6 +19,22 @@ This architecture shows a Laravel-based system:
   - Laravel checks **file-based cache** (using `CACHE_DRIVER=file`)
   - If cached → returns cached result
   - If not cached → calls **OpenAI API** (API key from `.env`), saves response to **cache + DB**, returns to client
+---
+## 🏗️ Tech Stack
+
+- **PHP version**: 8.2.28
+- **Laravel Framework version**: 12.10.2
+- **Database**: SQLite
+- **OpenAI API**
+- **Postman** – API Testing
+
+### Laravel Libraries / Packages
+
+- `Smalot\PdfParser`
+- `Http\Request`
+---
+## 🛠️ Project Setup
+Follow the instructions [here](https://docs.google.com/document/d/1pOb4KlfSNzRetxwUk9A92W2aj5bUdJCUqD7Rgi0wFC4/edit?usp=sharing)
 
 ---
 ## 📝 API Endpoints
