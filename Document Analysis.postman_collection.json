@@ -1,0 +1,278 @@
+{
+	"info": {
+		"_postman_id": "739a6a2d-6b9c-40f0-80af-209013992f52",
+		"name": "Document Analysis",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40620410"
+	},
+	"item": [
+		{
+			"name": "/api/register",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "//{\"name\": \"testuser32\", \"email\": \"test32@example.com\", \"password\": \"password123\",\"password_confirmation\": \"password123\"}\r\n{\"name\": \"admin\", \"email\": \"admin@example.com\", \"password\": \"admin123\",\"password_confirmation\": \"admin123\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/register",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"test32@example.com\",\r\n    \"password\": \"password123\"\r\n}\r\n\r\n\r\n// {\r\n//     \"email\": \"admin@example.com\",\r\n//     \"password\": \"admin123\"\r\n// }\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/login",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/logout",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/logout",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/documents",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/Abhishek/Downloads/Sample_Service_Contract.pdf"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/documents",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"documents"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/documents/{id}/analyze",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/documents/24/analyze",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"documents",
+						"24",
+						"analyze"
+					]
+				},
+				"description": "### Analyze Document\n\nThis endpoint is used to analyze a specific document with the ID 24.\n\n#### Request Body\n\n- No request body is required for this endpoint.\n    \n\n#### Response\n\nThe response will be in JSON format with the following schema:\n\n``` json\n{\n  \"message\": \"string\",\n  \"result\": {\n    \"id\": \"string\",\n    \"object\": \"string\",\n    \"created\": 0,\n    \"model\": \"string\",\n    \"choices\": [\n      {\n        \"index\": 0,\n        \"message\": {\n          \"role\": \"string\",\n          \"content\": \"string\",\n          \"refusal\": \"string\",\n          \"annotations\": [\"string\"]\n        },\n        \"logprobs\": \"string\",\n        \"finish_reason\": \"string\"\n      }\n    ],\n    \"usage\": {\n      \"prompt_tokens\": 0,\n      \"completion_tokens\": 0,\n      \"total_tokens\": 0,\n      \"prompt_tokens_details\": {\n        \"cached_tokens\": 0,\n        \"audio_tokens\": 0\n      },\n      \"completion_tokens_details\": {\n        \"reasoning_tokens\": 0,\n        \"audio_tokens\": 0,\n        \"accepted_prediction_tokens\": 0,\n        \"rejected_prediction_tokens\": 0\n      }\n    },\n    \"service_tier\": \"string\",\n    \"system_fingerprint\": \"string\"\n  }\n}\n\n ```\n\nThe response will have a status code of 200 and a content type of application/json."
+			},
+			"response": []
+		},
+		{
+			"name": "/api/documents",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/documents",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"documents"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/documents/{id}",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/documents/2",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"documents",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/analyzed-documents",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/analyzed-documents",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"analyzed-documents"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/documents/{id}/download",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/documents/2/download",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"documents",
+						"2",
+						"download"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
