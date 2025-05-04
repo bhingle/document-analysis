@@ -17,6 +17,8 @@ A Laravel-based REST API for uploading, analyzing, and managing PDF documents us
 - `Smalot\PdfParser`
 - `Http\Request`
 
+Check out the demo on YouTube:  
+[👉 Watch the demo here](https://www.youtube.com/watch?v=fQkxtaQirDo)
 ---
 
 ## 📝 API Endpoints
